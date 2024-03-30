@@ -4,7 +4,6 @@ import { useFocusEffect, useNavigation, DrawerActions } from '@react-navigation/
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useState } from 'react';
-import AddItem from './AddItem';
 import DateTimePicker from '@react-native-community/datetimepicker'
 
 
