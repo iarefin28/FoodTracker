@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View, TouchableOpacity, Vibration, Modal, SafeAreaView, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Vibration, Modal, SafeAreaView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { useFocusEffect, useNavigation, DrawerActions } from '@react-navigation/native'
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -10,6 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 const Home = () => {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false)
+    const [storageSelect, setStorageSelect] = useState("")
 
     const handleOpenDrawer = () => {
         navigation.openDrawer();
@@ -42,7 +45,19 @@ const Home = () => {
     });
 
     const handleSelectFridge = () => {
+        setStorageSelect("Fridge")
+    }
 
+    const handleSelectFreezer = () => {
+        setStorageSelect("Freezer")
+    }
+
+    const handleSelectPantry = () => {
+        setStorageSelect("Pantry")
+    }
+
+    const handleSelectGrocery = () => {
+        setStorageSelect("Grocery")
     }
 
     return (
@@ -53,50 +68,64 @@ const Home = () => {
                 visible={modalVisible}
             >
                 <SafeAreaView style={styles.modalContainer}>
-                    <View style={{ height: "5%", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                        <TouchableOpacity onPress={handleCloseModalPress}>
-                            <Ionicons name="close" color={"white"} size={30} style={{ marginLeft: 10 }} />
-                        </TouchableOpacity>
-                        <Text style={{ textAlign: 'center', color: 'white', fontSize: 16 }}>Add New Food Item</Text>
-                        <TouchableOpacity onPress={handleCloseModalPress} disabled={true}>
-                            <Ionicons name="close" color={"black"} size={30} style={{ marginLeft: 10 }} />
-                        </TouchableOpacity>
+                    <View style={{ height: "50%" }}>
+                        <View style={{ height: "10%", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                            <TouchableOpacity onPress={handleCloseModalPress}>
+                                <Ionicons name="close" color={"white"} size={30} style={{ marginLeft: 10 }} />
+                            </TouchableOpacity>
+                            <Text style={{ textAlign: 'center', color: 'white', fontSize: 16 }}>New Food Item</Text>
+                            <TouchableOpacity onPress={handleCloseModalPress} disabled={true}>
+                                <Ionicons name="close" color={"black"} size={30} style={{ marginLeft: 10 }} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.modalMainContents}>
+                            <View style={styles.inputContainer}>
+                                <View style={styles.overlay} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="e.g. Bananas, apples, chicken"
+                                    autoFocus={true}
+                                />
+                            </View>
+                            <View style={styles.inputContainer}>
+                                <View style={styles.overlay} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Expiration date"
+                                />
+                            </View>
+                            <View style={styles.storageMethod}>
+                                <TouchableOpacity style={[styles.storageButtons, storageSelect === 'Fridge' ? { borderWidth: 2, borderColor: 'gold' } : {}]} onPress={handleSelectFridge}>
+                                    <View style={styles.overlay} />
+                                    <Text style={{ color: "white" }}>Fridge</Text>
+                                    <MaterialCommunityIcons name='fridge' color={'white'} size={20} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.storageButtons, storageSelect === 'Freezer' ? { borderWidth: 2, borderColor: 'gold' } : {}]} onPress={handleSelectFreezer}>
+                                    <View style={styles.overlay} />
+                                    <Text style={{ color: "white" }}>Freezer</Text>
+                                    <Ionicons name='snow-outline' color={'white'} size={20} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.storageButtons, storageSelect === 'Pantry' ? { borderWidth: 2, borderColor: 'gold' } : {}]} onPress={handleSelectPantry}>
+                                    <View style={styles.overlay} />
+                                    <Text style={{ color: "white" }}>Pantry</Text>
+                                    <MaterialCommunityIcons name='library-shelves' color={'white'} size={20} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.storageButtons, storageSelect === 'Grocery' ? { borderWidth: 2, borderColor: 'gold' } : {}]} onPress={handleSelectGrocery}>
+                                    <View style={styles.overlay} />
+                                    <Text style={{ color: "white" }}>Grocery</Text>
+                                    <MaterialIcon name='local-grocery-store' color={'white'} size={20} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
-                    <View style={styles.modalMainContents}>
-                        <View style={styles.inputContainer}>
-                            <View style={styles.overlay} />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="e.g. Bananas, apples, chicken"
-                                autoFocus={true}
-                            />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <View style={styles.overlay} />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Expiration date"
-                            />
-                        </View>
-                        <View style={styles.storageMethod}>
-                            <TouchableOpacity style={styles.storageButtons} onPress={handleSelectFridge}>
-                                <View style={styles.overlay}/>
-                                <Text style={{color: "white"}}>Hello</Text>
+                    <KeyboardAvoidingView
+                        style={styles.modalDone}
+                        behavior={Platform.OS === "ios" ? "padding" : "height"}
+                        keyboardVerticalOffset={Platform.OS === "ios" ? 32 : 0}>
+                            <TouchableOpacity style={styles.DoneButton}>
+                                <Text style={{color: "white", fontSize: 16}}>Add</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.storageButtons} onPress={handleSelectFridge}>
-                                <View style={styles.overlay}/>
-                                <Text style={{color: "white"}}>Hello</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.storageButtons} onPress={handleSelectFridge}>
-                                <View style={styles.overlay}/>
-                                <Text style={{color: "white"}}>Hello</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.storageButtons} onPress={handleSelectFridge}>
-                                <View style={styles.overlay}/>
-                                <Text style={{color: "white"}}>Hello</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                    </KeyboardAvoidingView>
                 </SafeAreaView>
             </Modal>
             <View style={{ backgroundColor: "white", flex: 1 }}>
@@ -113,15 +142,16 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         flex: 1,
-        backgroundColor: "black"
+        backgroundColor: "black",
+        justifyContent: "space-between"
     },
     modalMainContents: {
         alignItems: "center",
-        flex: 1,
+        height: "90%",
     },
     inputContainer: {
         width: "90%",
-        height: "9%",
+        height: "18%",
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
         borderRadius: 15,
@@ -146,7 +176,7 @@ const styles = StyleSheet.create({
     },
     storageMethod: {
 
-        height: "9%",
+        height: "18%",
         width: "90%",
         justifyContent: "center",
         flexDirection: "row",
@@ -158,6 +188,20 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginRight: 5,
         marginTop: 10,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    modalDone: {
+        width: "100%",
+        height: "100%",
+        justifyContent: "flex-end",
+        alignItems: "center"
+    },
+    DoneButton: {
+        width: "90%",
+        height: 60,
+        backgroundColor: '#0E7AFE',
+        borderRadius: 15,
         justifyContent: "center",
         alignItems: "center"
     }
