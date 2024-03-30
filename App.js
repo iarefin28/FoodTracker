@@ -16,18 +16,11 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName='Home'>
+      <Drawer.Navigator initialRouteName='Home' style={{backgroundColor: 'black'}}>
         <Drawer.Screen name="Food Tracker" component={Home}/>
       </Drawer.Navigator>
     </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
