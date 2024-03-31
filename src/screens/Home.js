@@ -28,6 +28,7 @@ const Home = () => {
     const [datePickerOpen, setDatePickerOpen] = useState(false)
     const nameRef = useRef(null)
     const Tab = createBottomTabNavigator();
+    const [selectedTab, setSelectedTab] = useState("Fridge")
 
     const handleOpenDrawer = () => {
         navigation.openDrawer();
@@ -143,6 +144,10 @@ const Home = () => {
 
     const handleCloseDatePicker = () => { setDatePickerOpen(false) }
     const handleOpenDatePicker = () => { setDatePickerOpen(true); nameRef.current.blur(); }
+
+    const handleTabPress = (tabName) => {
+        setSelectedTab(tabName)
+    }
 
 
 
@@ -268,6 +273,12 @@ const Home = () => {
                 </SafeAreaView>
             </Modal>
             <View style={{ flex: 1 }}>
+                <View style={{height: "5%", justifyContent: "center", alignItems: "center", flexDirection: "row", borderRadius: 25, width: "100%"}}>
+                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderRadius: 25, height: "80%", backgroundColor: selectedTab === 'Fridge' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Fridge</Text></View>
+                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderRadius: 25, height: "80%", backgroundColor: selectedTab === 'Freezer' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Freezer</Text></View>
+                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderRadius: 25, height: "80%", backgroundColor: selectedTab === 'Pantry' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Pantry</Text></View>
+                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderRadius: 25, height: "80%", backgroundColor: selectedTab === 'Groceries' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Groceries</Text></View>
+                </View>
                 <Tab.Navigator
                     screenOptions={{
                         tabBarStyle: {
@@ -277,8 +288,8 @@ const Home = () => {
                         tabBarActiveTintColor: '#0E7AFE', // active tab color
                         tabBarInactiveTintColor: 'gray', // inactive tab color
                         tabBarShowLabel: false,
-                        headerShown: true
-                    }}
+                        headerShown: false
+                    }}a
                 >
                     <Tab.Screen
                         name="Fridge"
@@ -288,6 +299,12 @@ const Home = () => {
                                 <MaterialCommunityIcons name='fridge' color={color} size={26} />
                             ),
                         }}
+                        listeners={({ navigation, route }) => ({
+                            tabPress: () => {
+                                // Update the selected tab when it is pressed
+                                setSelectedTab('Fridge');
+                            },
+                        })}
                     />
                     <Tab.Screen
                         name="Freezer"
@@ -297,6 +314,12 @@ const Home = () => {
                                 <Ionicons name='snow-outline' color={color} size={26} />
                             ),
                         }}
+                        listeners={({ navigation, route }) => ({
+                            tabPress: () => {
+                                // Update the selected tab when it is pressed
+                                setSelectedTab('Freezer');
+                            },
+                        })}
                     />
                     <Tab.Screen
                         name="Pantry"
@@ -306,15 +329,27 @@ const Home = () => {
                                 <MaterialCommunityIcons name='library-shelves' color={color} size={26} />
                             ),
                         }}
+                        listeners={({ navigation, route }) => ({
+                            tabPress: () => {
+                                // Update the selected tab when it is pressed
+                                setSelectedTab('Pantry');
+                            },
+                        })}
                     />
                     <Tab.Screen
                         name="Grocery List"
                         component={HomeDisplay}
                         options={{
                             tabBarIcon: ({ color, size }) => (
-                                <MaterialIcon name='local-grocery-store' color={color} size={26} />
+                                <MaterialIcon name='local-grocery-store' color={color} size={26}  />
                             ),
                         }}
+                        listeners={({ navigation, route }) => ({
+                            tabPress: () => {
+                                // Update the selected tab when it is pressed
+                                setSelectedTab('Groceries');
+                            },
+                        })}
                     />
                 </Tab.Navigator>
             </View>
