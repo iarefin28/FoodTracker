@@ -5,11 +5,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import DatePicker from 'react-native-date-picker'
+
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const Home = () => {
     const navigation = useNavigation();
@@ -18,6 +19,9 @@ const Home = () => {
     const [itemName, setItemName] = useState("") //Keeps track of the name of the item 
     const [modalCount, setModalCount] = useState(0)
     const [modalAmountUnit, setModalAmountUnit] = useState("oz.")
+    const [expirationDate, setExpirationDate] = useState(new Date())
+    const [datePickerOpen, setDatePickerOpen] = useState(false)
+    const nameRef = useRef(null)
 
     const handleOpenDrawer = () => {
         navigation.openDrawer();
@@ -33,6 +37,7 @@ const Home = () => {
         setItemName("");
         setModalCount(0);
         setModalAmountUnit("oz.")
+        setExpirationDate(new Date())
     }
 
     const handleStoreItem = async () => {
@@ -95,7 +100,7 @@ const Home = () => {
         setModalCount(e);
     }
 
-    const addCount = () => { 
+    const addCount = () => {
         const count = parseFloat(modalCount);
         if (!isNaN(count) && count < 999) {
             setModalCount(count + 1);
@@ -105,7 +110,7 @@ const Home = () => {
         }
     }
 
-    const subCount = () => { 
+    const subCount = () => {
         const count = parseFloat(modalCount);
         if (!isNaN(count) && count > 0) {
             setModalCount(count - 1);
@@ -114,6 +119,16 @@ const Home = () => {
             console.error('modalCount is not a valid number');
         }
     }
+
+    const handleDateUpdate = (date) => {
+        setExpirationDate(date)
+        handleCloseDatePicker()
+    }
+
+    const handleCloseDatePicker = () => { setDatePickerOpen(false) }
+    const handleOpenDatePicker = () => { setDatePickerOpen(true); nameRef.current.blur(); }
+
+
 
     return (
         <View style={styles.container}>
@@ -140,6 +155,7 @@ const Home = () => {
                                     style={styles.input}
                                     placeholder="e.g. Bananas, apples, chicken"
                                     autoFocus={true}
+                                    ref={nameRef}
                                     value={itemName}
                                     onChangeText={handleNameChange}
                                 />
@@ -149,6 +165,15 @@ const Home = () => {
                                 <TextInput
                                     style={styles.input}
                                     placeholder="Expiration date"
+                                    value={expirationDate.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric', })}
+                                    editable="false"
+                                    onPressIn={handleOpenDatePicker}
+                                />
+                                <DateTimePickerModal
+                                    isVisible={datePickerOpen}
+                                    mode="date"
+                                    onConfirm={handleDateUpdate}
+                                    onCancel={handleCloseDatePicker}
                                 />
                             </View>
                             <View style={styles.storageMethodContainer}>
@@ -183,15 +208,15 @@ const Home = () => {
                                         value={modalCount.toString()}
                                         onChangeText={handleSetCount}
                                     />
-                                    <View style={{ width: "25%", borderTopRightRadius: 15, borderBottomRightRadius: 15}}>
-                                        <TouchableOpacity 
-                                            style={{ height: "50%", justifyContent: "center", alignItems: "center", borderBottomWidth: 1, borderLeftWidth: 1}}
+                                    <View style={{ width: "25%", borderTopRightRadius: 15, borderBottomRightRadius: 15 }}>
+                                        <TouchableOpacity
+                                            style={{ height: "50%", justifyContent: "center", alignItems: "center", borderBottomWidth: 1, borderLeftWidth: 1 }}
                                             onPress={addCount}
                                         >
                                             <Ionicons name='add' color={'white'} size={20} />
                                         </TouchableOpacity>
-                                        <TouchableOpacity 
-                                            style={{ height: "50%", justifyContent: "center", alignItems: "center", borderLeftWidth: 1}}
+                                        <TouchableOpacity
+                                            style={{ height: "50%", justifyContent: "center", alignItems: "center", borderLeftWidth: 1 }}
                                             onPress={subCount}
                                         >
                                             <MaterialCommunityIcons name='minus' color={'white'} size={20} />
@@ -205,7 +230,7 @@ const Home = () => {
                                         placeholder="Weight"
                                         keyboardType='numeric'
                                     />
-                                    <TouchableOpacity 
+                                    <TouchableOpacity
                                         style={{ width: "25%", borderTopRightRadius: 15, borderBottomRightRadius: 15, height: "100%", justifyContent: "center", alignItems: "center", borderLeftWidth: 1 }}
                                         onPress={handleChangeUnits}
                                     >
@@ -215,12 +240,12 @@ const Home = () => {
                             </View>
                         </View>
                     </View>
-                
+
                     <KeyboardAvoidingView
                         style={styles.modalDone}
                         behavior={Platform.OS === "ios" ? "padding" : "height"}
                         keyboardVerticalOffset={Platform.OS === "ios" ? 32 : 0}>
-                        <TouchableOpacity style={styles.DoneButton} onPress={() => handleStoreItem()}>
+                        <TouchableOpacity style={[styles.DoneButton, {height: datePickerOpen ? 0 : 60} ]} onPress={() => handleStoreItem()}>
                             <Text style={{ color: "white", fontSize: 16 }}>Add</Text>
                         </TouchableOpacity>
                     </KeyboardAvoidingView>
@@ -329,12 +354,3 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
-/*
-When it comes to data that goes in need to keep track of 
-- Food name 
-- Expiration Date
-- If it should go in freezer, fridge, or pantry 
-
-
-*/
