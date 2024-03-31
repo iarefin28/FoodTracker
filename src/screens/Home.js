@@ -8,11 +8,16 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker'
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import DatePicker from 'react-native-date-picker'
 
 const Home = () => {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false)
-    const [storageSelect, setStorageSelect] = useState("")
+    const [storageSelect, setStorageSelect] = useState("") //Keeps track of where this item is being stored
+    const [itemName, setItemName] = useState("") //Keeps track of the name of the item 
+    const [modalCount, setModalCount] = useState(0)
+    const [modalAmountUnit, setModalAmountUnit] = useState("oz.")
 
     const handleOpenDrawer = () => {
         navigation.openDrawer();
@@ -24,6 +29,24 @@ const Home = () => {
 
     const handleCloseModalPress = () => {
         setModalVisible(false);
+        setStorageSelect("");
+        setItemName("");
+        setModalCount(0);
+        setModalAmountUnit("oz.")
+    }
+
+    const handleStoreItem = async () => {
+        try {
+            console.log(value)
+            const jsonValue = JSON.stringify(value)
+            console.log(jsonValue)
+            console.log(JSON.parse(jsonValue))
+            //await AsyncStorage.setItem('@storage_Key', value)
+            //setModalVisible(false)
+        } catch (e) {
+            // saving error
+            console.log('Failed to save the data to the storage', e);
+        }
     }
 
     useFocusEffect(() => {
@@ -60,6 +83,38 @@ const Home = () => {
         setStorageSelect("Grocery")
     }
 
+    const handleNameChange = (e) => {
+        setItemName(e);
+    }
+
+    const handleChangeUnits = () => {
+        console.log("hi")
+    }
+
+    const handleSetCount = (e) => {
+        setModalCount(e);
+    }
+
+    const addCount = () => { 
+        const count = parseFloat(modalCount);
+        if (!isNaN(count) && count < 999) {
+            setModalCount(count + 1);
+        } else {
+            // Handle the case when modalCount is not a valid number
+            console.error('modalCount is not a valid number');
+        }
+    }
+
+    const subCount = () => { 
+        const count = parseFloat(modalCount);
+        if (!isNaN(count) && count > 0) {
+            setModalCount(count - 1);
+        } else {
+            // Handle the case when modalCount is not a valid number
+            console.error('modalCount is not a valid number');
+        }
+    }
+
     return (
         <View style={styles.container}>
             <Modal
@@ -85,6 +140,8 @@ const Home = () => {
                                     style={styles.input}
                                     placeholder="e.g. Bananas, apples, chicken"
                                     autoFocus={true}
+                                    value={itemName}
+                                    onChangeText={handleNameChange}
                                 />
                             </View>
                             <View style={styles.inputContainer}>
@@ -94,7 +151,7 @@ const Home = () => {
                                     placeholder="Expiration date"
                                 />
                             </View>
-                            <View style={styles.storageMethod}>
+                            <View style={styles.storageMethodContainer}>
                                 <TouchableOpacity style={[styles.storageButtons, storageSelect === 'Fridge' ? { borderWidth: 2, borderColor: 'gold' } : {}]} onPress={handleSelectFridge}>
                                     <View style={styles.overlay} />
                                     <Text style={{ color: "white" }}>Fridge</Text>
@@ -116,15 +173,56 @@ const Home = () => {
                                     <MaterialIcon name='local-grocery-store' color={'white'} size={20} />
                                 </TouchableOpacity>
                             </View>
+                            <View style={styles.amountContainer}>
+                                <View style={styles.amountBoxesContainer}>
+                                    <View style={styles.overlay} />
+                                    <TextInput
+                                        style={styles.amountInputs}
+                                        placeholder="Count"
+                                        keyboardType='numeric'
+                                        value={modalCount.toString()}
+                                        onChangeText={handleSetCount}
+                                    />
+                                    <View style={{ width: "25%", borderTopRightRadius: 15, borderBottomRightRadius: 15}}>
+                                        <TouchableOpacity 
+                                            style={{ height: "50%", justifyContent: "center", alignItems: "center", borderBottomWidth: 1, borderLeftWidth: 1}}
+                                            onPress={addCount}
+                                        >
+                                            <Ionicons name='add' color={'white'} size={20} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity 
+                                            style={{ height: "50%", justifyContent: "center", alignItems: "center", borderLeftWidth: 1}}
+                                            onPress={subCount}
+                                        >
+                                            <MaterialCommunityIcons name='minus' color={'white'} size={20} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View style={styles.amountBoxesContainer}>
+                                    <View style={styles.overlay} />
+                                    <TextInput
+                                        style={styles.amountInputs}
+                                        placeholder="Weight"
+                                        keyboardType='numeric'
+                                    />
+                                    <TouchableOpacity 
+                                        style={{ width: "25%", borderTopRightRadius: 15, borderBottomRightRadius: 15, height: "100%", justifyContent: "center", alignItems: "center", borderLeftWidth: 1 }}
+                                        onPress={handleChangeUnits}
+                                    >
+                                        <Text style={{ color: "white" }}>{modalAmountUnit}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
                     </View>
+                
                     <KeyboardAvoidingView
                         style={styles.modalDone}
                         behavior={Platform.OS === "ios" ? "padding" : "height"}
                         keyboardVerticalOffset={Platform.OS === "ios" ? 32 : 0}>
-                            <TouchableOpacity style={styles.DoneButton}>
-                                <Text style={{color: "white", fontSize: 16}}>Add</Text>
-                            </TouchableOpacity>
+                        <TouchableOpacity style={styles.DoneButton} onPress={() => handleStoreItem()}>
+                            <Text style={{ color: "white", fontSize: 16 }}>Add</Text>
+                        </TouchableOpacity>
                     </KeyboardAvoidingView>
                 </SafeAreaView>
             </Modal>
@@ -152,8 +250,6 @@ const styles = StyleSheet.create({
     inputContainer: {
         width: "90%",
         height: "18%",
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
         borderRadius: 15,
         borderTopWidth: "2px",
         borderRightWidth: "2px",
@@ -174,13 +270,21 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         paddingLeft: 15
     },
-    storageMethod: {
-
+    amountInputs: {
+        flex: 1,
+        width: "75%",
+        height: "100%",
+        color: "white",
+        borderRadius: 15,
+        paddingLeft: 15,
+    },
+    storageMethodContainer: {
         height: "18%",
         width: "90%",
         justifyContent: "center",
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
+        marginBottom: 10
     },
     storageButtons: {
         height: "100%",
@@ -190,6 +294,23 @@ const styles = StyleSheet.create({
         marginTop: 10,
         justifyContent: "center",
         alignItems: "center"
+    },
+    amountContainer: {
+        height: "18%",
+        width: "90%",
+        justifyContent: "center",
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+    },
+    amountBoxesContainer: {
+        height: "100%",
+        width: "45%",
+        borderRadius: 15,
+        marginRight: 5,
+        marginTop: 10,
+        justifyContent: "center",
+        flexDirection: "row"
     },
     modalDone: {
         width: "100%",

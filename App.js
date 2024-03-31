@@ -8,6 +8,19 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 // Screens
 import Home from './src/screens/Home';
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+
+const listAllKeys = async () => {
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+    console.log('All keys in AsyncStorage:', keys);
+  } catch (e) {
+    console.log('Error listing all keys:', e);
+  }
+};
+
+listAllKeys();
 
 
 export default function App() {
