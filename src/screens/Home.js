@@ -41,13 +41,23 @@ const Home = () => {
     }
 
     const handleStoreItem = async () => {
+        console.log("Name of Item: " + itemName + "\nExpirationDate: " + expirationDate + "\nStorage Area: " + storageSelect + "\nAmount: " +modalCount);
         try {
-            console.log(value)
-            const jsonValue = JSON.stringify(value)
-            console.log(jsonValue)
-            console.log(JSON.parse(jsonValue))
-            //await AsyncStorage.setItem('@storage_Key', value)
-            //setModalVisible(false)
+            const jsonValue = JSON.stringify({itemName: itemName, expDate: expirationDate, storageMethod: storageSelect, count: modalCount})
+
+            //Get Global Count
+            globalCount = 0 
+            AsyncStorage.getItem('globalItemCount')
+                .then(value => {
+                    globalCount = JSON.parse(value).count
+                })
+                .catch(error => console.error('Error retrieving count:', error))
+
+            globalCount += 1 //increment global count, this will be the next items unique key
+
+            console.log('Item' + globalCount)
+            await AsyncStorage.setItem('Item' + globalCount, jsonValue);
+            setModalVisible(false)
         } catch (e) {
             // saving error
             console.log('Failed to save the data to the storage', e);
@@ -166,7 +176,7 @@ const Home = () => {
                                     style={styles.input}
                                     placeholder="Expiration date"
                                     value={expirationDate.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric', })}
-                                    editable="false"
+                                    editable={false}
                                     onPressIn={handleOpenDatePicker}
                                 />
                                 <DateTimePickerModal

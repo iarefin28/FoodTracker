@@ -10,7 +10,6 @@ import Home from './src/screens/Home';
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-
 const listAllKeys = async () => {
   try {
     const keys = await AsyncStorage.getAllKeys();
@@ -22,10 +21,35 @@ const listAllKeys = async () => {
 
 listAllKeys();
 
+const getData = async (item) => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(item);
+    console.log(JSON.parse(jsonValue))
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    // error reading value
+  }
+};
+
+getData("Item1")
+
+// Code below is initializing database with globalCount
+// AsyncStorage.setItem('globalItemCount', JSON.stringify({itemCount: 0}))
+
+// Code to get the global count
+// globalCount = 0 
+// AsyncStorage.getItem('globalItemCount')
+// .then(value => {
+//     globalCount = JSON.parse(value).count
+// })
+// .catch(error => console.error('Error retrieving count:', error))
+// console.log(globalCount)
+
 
 export default function App() {
   const Stack = createNativeStackNavigator();
   const Drawer = createDrawerNavigator();
+  
 
   return (
     <NavigationContainer>
