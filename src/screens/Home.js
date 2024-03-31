@@ -12,6 +12,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
+import HomeDisplay from './HomeDisplay';
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+
 const Home = () => {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false)
@@ -22,6 +27,7 @@ const Home = () => {
     const [expirationDate, setExpirationDate] = useState(new Date())
     const [datePickerOpen, setDatePickerOpen] = useState(false)
     const nameRef = useRef(null)
+    const Tab = createBottomTabNavigator();
 
     const handleOpenDrawer = () => {
         navigation.openDrawer();
@@ -41,26 +47,26 @@ const Home = () => {
     }
 
     const handleStoreItem = async () => {
-        console.log("Name of Item: " + itemName + "\nExpirationDate: " + expirationDate + "\nStorage Area: " + storageSelect + "\nAmount: " +modalCount);
+        //console.log("Name of Item: " + itemName + "\nExpirationDate: " + expirationDate + "\nStorage Area: " + storageSelect + "\nAmount: " +modalCount);
         try {
-            const jsonValue = JSON.stringify({itemName: itemName, expDate: expirationDate, storageMethod: storageSelect, count: modalCount})
+            // Retrieve global count from AsyncStorage
+            const value = await AsyncStorage.getItem('globalItemCounter');
+            let globalCount = JSON.parse(value).itemCount || 0; // Initialize to 0 if no value is retrieved
 
-            //Get Global Count
-            globalCount = 0 
-            AsyncStorage.getItem('globalItemCount')
-                .then(value => {
-                    globalCount = JSON.parse(value).count
-                })
-                .catch(error => console.error('Error retrieving count:', error))
+            // Increment global count
+            globalCount += 1;
 
-            globalCount += 1 //increment global count, this will be the next items unique key
-
-            console.log('Item' + globalCount)
+            // Store item using incremented global count
+            const jsonValue = JSON.stringify({ itemName: itemName, expDate: expirationDate, storageMethod: storageSelect, count: modalCount });
             await AsyncStorage.setItem('Item' + globalCount, jsonValue);
-            setModalVisible(false)
-        } catch (e) {
-            // saving error
-            console.log('Failed to save the data to the storage', e);
+
+            // Update global count in AsyncStorage
+            await AsyncStorage.setItem('globalItemCounter', JSON.stringify({ itemCount: globalCount }));
+
+            handleCloseModalPress()
+        } catch (error) {
+            // Handle errors
+            console.error('Failed to handle store item:', error);
         }
     }
 
@@ -255,14 +261,62 @@ const Home = () => {
                         style={styles.modalDone}
                         behavior={Platform.OS === "ios" ? "padding" : "height"}
                         keyboardVerticalOffset={Platform.OS === "ios" ? 32 : 0}>
-                        <TouchableOpacity style={[styles.DoneButton, {height: datePickerOpen ? 0 : 60} ]} onPress={() => handleStoreItem()}>
+                        <TouchableOpacity style={[styles.DoneButton, { height: datePickerOpen ? 0 : 60 }]} onPress={() => handleStoreItem()}>
                             <Text style={{ color: "white", fontSize: 16 }}>Add</Text>
                         </TouchableOpacity>
                     </KeyboardAvoidingView>
                 </SafeAreaView>
             </Modal>
-            <View style={{ backgroundColor: "white", flex: 1 }}>
-                <Text color="white">hi</Text>
+            <View style={{ flex: 1 }}>
+                <Tab.Navigator
+                    screenOptions={{
+                        tabBarStyle: {
+                            backgroundColor: 'black',
+                            borderTopColor: 'gray'
+                        },
+                        tabBarActiveTintColor: '#0E7AFE', // active tab color
+                        tabBarInactiveTintColor: 'gray', // inactive tab color
+                        tabBarShowLabel: false,
+                        headerShown: true
+                    }}
+                >
+                    <Tab.Screen
+                        name="Fridge"
+                        component={HomeDisplay}
+                        options={{
+                            tabBarIcon: ({ color, size }) => (
+                                <MaterialCommunityIcons name='fridge' color={color} size={26} />
+                            ),
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Freezer"
+                        component={HomeDisplay}
+                        options={{
+                            tabBarIcon: ({ color, size }) => (
+                                <Ionicons name='snow-outline' color={color} size={26} />
+                            ),
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Pantry"
+                        component={HomeDisplay}
+                        options={{
+                            tabBarIcon: ({ color, size }) => (
+                                <MaterialCommunityIcons name='library-shelves' color={color} size={26} />
+                            ),
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Grocery List"
+                        component={HomeDisplay}
+                        options={{
+                            tabBarIcon: ({ color, size }) => (
+                                <MaterialIcon name='local-grocery-store' color={color} size={26} />
+                            ),
+                        }}
+                    />
+                </Tab.Navigator>
             </View>
         </View>
     )

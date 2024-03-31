@@ -23,6 +23,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 // };
 // listAllKeys();
 
+
+
 //If this is the first launch then global counter is not set up in async storage, create global counter if this is the first launch
 const initializeCounter = async () => {
 	try {
