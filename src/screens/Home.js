@@ -273,11 +273,11 @@ const Home = () => {
                 </SafeAreaView>
             </Modal>
             <View style={{ flex: 1 }}>
-                <View style={{height: "5%", justifyContent: "center", alignItems: "center", flexDirection: "row", borderRadius: 25, width: "100%"}}>
-                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderRadius: 25, height: "80%", backgroundColor: selectedTab === 'Fridge' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Fridge</Text></View>
-                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderRadius: 25, height: "80%", backgroundColor: selectedTab === 'Freezer' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Freezer</Text></View>
-                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderRadius: 25, height: "80%", backgroundColor: selectedTab === 'Pantry' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Pantry</Text></View>
-                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderRadius: 25, height: "80%", backgroundColor: selectedTab === 'Groceries' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Groceries</Text></View>
+                <View style={{height: "5%", justifyContent: "center", alignItems: "flex-end", flexDirection: "row", width: "100%",}}>
+                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Fridge' ? '#0E7AFE' : '#000', borderBottomWidth: selectedTab === 'Fridge' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Fridge</Text></View>
+                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Freezer' ? 'rgb(0, 64, 221)' : '#000',}}><Text style={{color: "white"}}>Freezer</Text></View>
+                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Pantry' ? 'rgb(178, 80, 0)' : '#000',}}><Text style={{color: "white"}}>Pantry</Text></View>
+                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Groceries' ? 'rgb(52, 199, 89)' : '#000',}}><Text style={{color: "white"}}>Groceries</Text></View>
                 </View>
                 <Tab.Navigator
                     screenOptions={{
