@@ -28,6 +28,7 @@ const Home = () => {
     const nameRef = useRef(null)
     const Tab = createBottomTabNavigator();
     const [selectedTab, setSelectedTab] = useState("Fridge")
+    const [expDays, setExpDays] = useState("Today")
 
     const handleOpenDrawer = () => {
         navigation.openDrawer();
@@ -44,6 +45,7 @@ const Home = () => {
         setModalCount(0);
         setModalAmountUnit("oz.")
         setExpirationDate(new Date())
+        setExpDays("Today")
     }
 
     const handleStoreItem = async () => {
@@ -109,8 +111,12 @@ const Home = () => {
     }
 
     const handleChangeUnits = () => {
-        console.log("hi")
-        setShowPicker(true)
+        if (modalAmountUnit === "oz.") setModalAmountUnit("lb.")
+        else if (modalAmountUnit === "lb.") setModalAmountUnit("g")
+        else if (modalAmountUnit === "g") setModalAmountUnit("kg")
+        else if (modalAmountUnit === "kg") setModalAmountUnit("mL")
+        else if (modalAmountUnit === "mL") setModalAmountUnit("L")
+        else if (modalAmountUnit === "L") setModalAmountUnit("oz.")
     }
 
     const handleSetCount = (e) => {
@@ -139,6 +145,17 @@ const Home = () => {
 
     const handleDateUpdate = (date) => {
         setExpirationDate(date)
+        const currentDate = new Date();
+        currentDate.setHours(date.getHours())
+        console.log(date)
+        console.log(currentDate)
+        const differenceInMilliseconds = date.getTime() - currentDate.getTime();
+        const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+
+        if(differenceInDays == 0) setExpDays("Today")
+        else if(differenceInDays == 1) setExpDays(differenceInDays.toString() + " day")
+        else setExpDays(differenceInDays.toString() + " days")
+
         handleCloseDatePicker()
     }
 
@@ -183,8 +200,11 @@ const Home = () => {
                             </View>
                             <View style={styles.inputContainer}>
                                 <View style={styles.overlay} />
+                                <View style={{width: "33%", justifyContent: "center", paddingLeft: 15, borderRightWidth: "1px"}}>
+                                    <Text style={{color: "gray"}}>Expiration</Text>
+                                </View>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input, { width: "33%"}]}
                                     placeholder="Expiration date"
                                     value={expirationDate.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric', })}
                                     editable={false}
@@ -196,6 +216,11 @@ const Home = () => {
                                     onConfirm={handleDateUpdate}
                                     onCancel={handleCloseDatePicker}
                                 />
+                                <View style={{ width: "33%", justifyContent: "center", alignItems: "center" }}>
+                                    <Text style={{ color: "white" }}>
+                                        {expDays}
+                                    </Text>
+                                </View>
                             </View>
                             <View style={styles.storageMethodContainer}>
                                 <TouchableOpacity style={[styles.storageButtons, storageSelect === 'Fridge' ? { borderWidth: 2, borderColor: 'gold' } : {}]} onPress={handleSelectFridge}>
@@ -379,6 +404,7 @@ const styles = StyleSheet.create({
         borderRightWidth: "2px",
         borderLeftWidth: "2px",
         marginBottom: 10,
+        flexDirection: "row"
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
