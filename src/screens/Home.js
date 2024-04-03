@@ -16,7 +16,6 @@ import HomeDisplay from './HomeDisplay';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-
 const Home = () => {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false)
@@ -111,6 +110,7 @@ const Home = () => {
 
     const handleChangeUnits = () => {
         console.log("hi")
+        setShowPicker(true)
     }
 
     const handleSetCount = (e) => {
@@ -273,11 +273,11 @@ const Home = () => {
                 </SafeAreaView>
             </Modal>
             <View style={{ flex: 1 }}>
-                <View style={{height: "5%", justifyContent: "center", alignItems: "flex-end", flexDirection: "row", width: "100%",}}>
-                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Fridge' ? '#0E7AFE' : '#000', borderBottomWidth: selectedTab === 'Fridge' ? '#0E7AFE' : '#000',}}><Text style={{color: "white"}}>Fridge</Text></View>
-                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Freezer' ? 'rgb(0, 64, 221)' : '#000',}}><Text style={{color: "white"}}>Freezer</Text></View>
-                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Pantry' ? 'rgb(178, 80, 0)' : '#000',}}><Text style={{color: "white"}}>Pantry</Text></View>
-                    <View style={{width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Groceries' ? 'rgb(52, 199, 89)' : '#000',}}><Text style={{color: "white"}}>Groceries</Text></View>
+                <View style={{ height: "5%", justifyContent: "center", alignItems: "flex-end", flexDirection: "row", width: "100%", }}>
+                    <View style={{ width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Fridge' ? '#0E7AFE' : '#000', borderBottomWidth: selectedTab === 'Fridge' ? '#0E7AFE' : '#000', }}><Text style={{ color: "white" }}>Fridge</Text></View>
+                    <View style={{ width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Freezer' ? 'rgb(0, 64, 221)' : '#000', }}><Text style={{ color: "white" }}>Freezer</Text></View>
+                    <View style={{ width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Pantry' ? 'rgb(178, 80, 0)' : '#000', }}><Text style={{ color: "white" }}>Pantry</Text></View>
+                    <View style={{ width: "25%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 18, borderBottomLeftRadius: 18, height: "100%", backgroundColor: selectedTab === 'Groceries' ? 'rgb(52, 199, 89)' : '#000', }}><Text style={{ color: "white" }}>Groceries</Text></View>
                 </View>
                 <Tab.Navigator
                     screenOptions={{
@@ -289,7 +289,7 @@ const Home = () => {
                         tabBarInactiveTintColor: 'gray', // inactive tab color
                         tabBarShowLabel: false,
                         headerShown: false
-                    }}a
+                    }} a
                 >
                     <Tab.Screen
                         name="Fridge"
@@ -341,7 +341,7 @@ const Home = () => {
                         component={HomeDisplay}
                         options={{
                             tabBarIcon: ({ color, size }) => (
-                                <MaterialIcon name='local-grocery-store' color={color} size={26}  />
+                                <MaterialIcon name='local-grocery-store' color={color} size={26} />
                             ),
                         }}
                         listeners={({ navigation, route }) => ({
