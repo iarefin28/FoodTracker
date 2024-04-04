@@ -216,11 +216,11 @@ const Home = () => {
                                     onConfirm={handleDateUpdate}
                                     onCancel={handleCloseDatePicker}
                                 />
-                                <View style={{ width: "33%", justifyContent: "center", alignItems: "center" }}>
+                                <TouchableOpacity style={{ width: "33%", justifyContent: "center", alignItems: "center" }} onPress={handleOpenDatePicker} activeOpacity={1}>
                                     <Text style={{ color: "white" }}>
                                         {expDays}
                                     </Text>
-                                </View>
+                                </TouchableOpacity>
                             </View>
                             <View style={styles.storageMethodContainer}>
                                 <TouchableOpacity style={[styles.storageButtons, storageSelect === 'Fridge' ? { borderWidth: 2, borderColor: 'gold' } : {}]} onPress={handleSelectFridge}>

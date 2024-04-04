@@ -51,7 +51,12 @@ export default function App() {
 
 	return (
 		<NavigationContainer>
-			<Drawer.Navigator initialRouteName='Home' style={{ backgroundColor: 'black' }}>
+			<Drawer.Navigator initialRouteName='Home'
+				screenOptions={{
+					drawerStyle: {
+						backgroundColor: 'rgb(28, 28, 30)',
+					},
+				}}>
 				<Drawer.Screen name="Food Tracker" component={Home} />
 			</Drawer.Navigator>
 		</NavigationContainer>
